@@ -6,8 +6,14 @@
 *.swp
 .buildlog/
 .history
-
-
+android/
+ios/
+web/
+macos/
+linux/
+windows/
+.idea/
+.dart_tool/
 
 # Flutter repo-specific
 /bin/cache/
