@@ -36,7 +36,7 @@ class Display extends StatelessWidget {
                   textAlign: TextAlign.end,
                   style: TextStyle(
                     fontSize: 16,
-                    color: colorScheme.onSurface.withOpacity(0.3),
+                    color: colorScheme.onSecondaryContainer,
                     fontWeight: FontWeight.w300,
                   ),
                 ),
