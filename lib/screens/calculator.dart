@@ -25,11 +25,23 @@ class CalculatorState extends State<Calculator> {
     SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
 
     return MaterialApp(
-      home: Column(
-        children: <Widget>[
-          Display(memory.value),
-          Keyboard(_onPressed),
-        ],
+      debugShowCheckedModeBanner: false,
+      theme: ThemeData(
+        useMaterial3: true,
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: Colors.lightBlueAccent,
+          brightness: Brightness.dark,
+        ),
+      ),
+      home: Scaffold(
+        body: SafeArea(
+          child: Column(
+            children: <Widget>[
+              Display(memory.value, history: memory.historyText),
+              Keyboard(_onPressed),
+            ],
+          ),
+        ),
       ),
     );
   }

@@ -7,6 +7,7 @@ class Memory {
   String _value = '0';
   bool _wipeValue = false;
   String? _lastCommand;
+  final List<String> _history = []; // Histórico das últimas 2 operações
 
   void applyCommand(String command) {
     if (_isReplacingOperation(command)) {
@@ -41,7 +42,16 @@ class Memory {
         _wipeValue = true;
       }
     } else {
-      _buffer[0] = _calculate();
+      double result = _calculate();
+      
+      // Formatar números para o histórico
+      String num1 = _formatNumber(_buffer[0]);
+      String num2 = _formatNumber(_buffer[1]);
+      String resultStr = _formatNumber(result);
+      String operationString = '$num1 $_operation $num2 = $resultStr';
+      _addToHistory(operationString);
+      
+      _buffer[0] = result;
       _buffer[1] = 0.0;
       _value = _buffer[0].toString();
       _value = _value.endsWith('.0') ? _value.split('.')[0] : _value;
@@ -75,6 +85,7 @@ class Memory {
     _bufferIndex = 0;
     _operation = null;
     _wipeValue = false;
+    _history.clear();
   }
 
   _calculate() {
@@ -82,6 +93,9 @@ class Memory {
       case '%':
         return _buffer[0] % _buffer[1];
       case '/':
+        if (_buffer[1] == 0) {
+          return null; // Evita divisão por zero
+        }
         return _buffer[0] / _buffer[1];
       case 'x':
         return _buffer[0] * _buffer[1];
@@ -94,7 +108,28 @@ class Memory {
     }
   }
 
+  void _addToHistory(String operation) {
+    _history.add(operation);
+    if (_history.length > 2) {
+      _history.removeAt(0); // Remove a operação mais antiga
+    }
+  }
+
+  String _formatNumber(double number) {
+    String str = number.toString();
+    return str.endsWith('.0') ? str.split('.')[0] : str;
+  }
+
   String get value {
     return _value;
+  }
+
+  List<String> get history {
+    return List.unmodifiable(_history); // Retorna cópia imutável
+  }
+
+  String get historyText {
+    if (_history.isEmpty) return 'Sem histórico';
+    return _history.reversed.join('\n');
   }
 }
