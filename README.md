@@ -13,6 +13,7 @@ Uma calculadora moderna e elegante desenvolvida em Flutter com Material Design 3
 - [Instalação](#-instalação)
 - [Como Executar](#-como-executar)
 - [Testes](#-testes)
+- [Análise de Código](#-análise-de-código)
 - [Estrutura do Projeto](#-estrutura-do-projeto)
 - [Arquitetura](#-arquitetura)
 
@@ -120,10 +121,87 @@ flutter test --reporter expanded
 
 ### Cobertura de testes
 
+#### Gerar relatório de cobertura
+
 ```bash
 flutter test --coverage
-genhtml coverage/lcov.info -o coverage/html
 ```
+
+Este comando executa todos os testes e gera um arquivo `coverage/lcov.info` com os dados de cobertura.
+
+#### Visualizar cobertura em HTML (Linux/macOS)
+
+```bash
+# Instalar lcov (se necessário)
+# Ubuntu/Debian: sudo apt-get install lcov
+# macOS: brew install lcov
+
+# Gerar relatório HTML
+genhtml coverage/lcov.info -o coverage/html
+
+# Abrir no navegador
+open coverage/html/index.html  # macOS
+xdg-open coverage/html/index.html  # Linux
+```
+
+#### Visualizar cobertura em HTML (Windows)
+
+```bash
+# Opção 1: Usar WSL com lcov
+wsl genhtml coverage/lcov.info -o coverage/html
+
+# Opção 2: Usar extensão do VS Code
+# Instale: Coverage Gutters (ryanluker.vscode-coverage-gutters)
+# A extensão lê automaticamente o lcov.info e exibe indicadores no editor
+```
+
+#### Filtrar cobertura por arquivo
+
+```bash
+# Visualizar cobertura no terminal
+flutter test --coverage && lcov --list coverage/lcov.info
+
+# Remover arquivos gerados do relatório
+lcov --remove coverage/lcov.info '*.g.dart' '*.freezed.dart' -o coverage/lcov.info
+```
+
+#### Meta de cobertura
+
+O projeto mantém **>90% de cobertura de código** com foco em:
+- ✅ Lógica de negócio (`models/memory.dart`)
+- ✅ Casos de uso críticos
+- ✅ Operações matemáticas
+- ✅ Tratamento de erros
+
+## 🔍 Análise de Código
+
+O projeto utiliza análise estática de código para manter a qualidade e detectar problemas potenciais.
+
+### Executar análise de código
+
+```bash
+flutter analyze
+```
+
+### Verificar formatação
+
+```bash
+flutter format --set-exit-if-changed .
+```
+
+### Formatar código automaticamente
+
+```bash
+flutter format .
+```
+
+### Análise com métricas detalhadas
+
+```bash
+flutter analyze --write=analysis.txt
+```
+
+O projeto segue as regras de lint configuradas em `analysis_options.yaml` usando o pacote `flutter_lints` para garantir código limpo e seguindo as melhores práticas do Flutter.
 
 ## 📁 Estrutura do Projeto
 

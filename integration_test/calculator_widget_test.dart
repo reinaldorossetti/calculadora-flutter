@@ -391,6 +391,41 @@ void main() {
       expect(_displayValue(tester), '25');
       expect(find.textContaining('15 + 10 = 25'), findsOneWidget);
     });
+
+    testWidgets('CTW36 - Deve limitar entrada a 21 caracteres', (tester) async {
+      await tester.pumpWidget(const Calculator());
+      await tester.pumpAndSettle();
+
+      // Tentar digitar 22 caracteres (21 dígitos + 1 ponto decimal = 22 chars)
+      await _tapSequence(tester, [
+        '1', '2', '3', '4', '5', '6', '7', '8', '9', '0',
+        '1', '2', '3', '4', '5', '6', '7', '8', '9', '0',
+        '.', '1'
+      ]);
+
+      // Deve parar em 21 caracteres
+      String displayValue = _displayValue(tester);
+      expect(displayValue.length, lessThanOrEqualTo(21));
+      // Deve ter exatamente 21 caracteres: 12345678901234567890.
+      expect(displayValue, '12345678901234567890.');
+    });
+
+    testWidgets('CTW37 - Deve limitar entrada a 21 caracteres sem ponto decimal', (tester) async {
+      await tester.pumpWidget(const Calculator());
+      await tester.pumpAndSettle();
+
+      // Tentar digitar 25 dígitos
+      await _tapSequence(tester, [
+        '1', '2', '3', '4', '5', '6', '7', '8', '9', '0',
+        '1', '2', '3', '4', '5', '6', '7', '8', '9', '0',
+        '1', '2', '3', '4', '5'
+      ]);
+
+      // Deve parar em 21 caracteres
+      String displayValue = _displayValue(tester);
+      expect(displayValue.length, 21);
+      expect(displayValue, '123456789012345678901');
+    });
   });
 }
 
