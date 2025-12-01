@@ -5,6 +5,7 @@ Uma calculadora moderna e elegante desenvolvida em Flutter com Material Design 3
 ![Flutter](https://img.shields.io/badge/Flutter-%3E%3D3.19.0-02569B?logo=flutter)
 ![Dart](https://img.shields.io/badge/Dart-%3E%3D3.0.0-0175C2?logo=dart)
 ![Material Design 3](https://img.shields.io/badge/Material-Design%203-757575?logo=material-design)
+![Tests](https://github.com/reinaldorossetti/calculadora-flutter/actions/workflows/flutter-test.yml/badge.svg)
 
 ## 📋 Índice
 
@@ -14,6 +15,7 @@ Uma calculadora moderna e elegante desenvolvida em Flutter com Material Design 3
 - [Como Executar](#-como-executar)
 - [Testes](#-testes)
 - [Análise de Código](#-análise-de-código)
+- [CI/CD - GitHub Actions](#-cicd---github-actions)
 - [Estrutura do Projeto](#-estrutura-do-projeto)
 - [Arquitetura](#-arquitetura)
 
@@ -138,6 +140,7 @@ Este comando executa todos os testes e gera um arquivo `coverage/lcov.info` com 
 
 # Gerar relatório HTML
 genhtml coverage/lcov.info -o coverage/html
+perl C:\ProgramData\chocolatey\lib\lcov\tools\bin\genhtml coverage/lcov.info -o coverage/
 
 # Abrir no navegador
 open coverage/html/index.html  # macOS
@@ -202,6 +205,57 @@ flutter analyze --write=analysis.txt
 ```
 
 O projeto segue as regras de lint configuradas em `analysis_options.yaml` usando o pacote `flutter_lints` para garantir código limpo e seguindo as melhores práticas do Flutter.
+
+## 🚀 CI/CD - GitHub Actions
+
+O projeto possui pipeline automatizado de CI/CD que é executado a cada push ou pull request nas branches `main` e `develop`.
+
+### Pipeline de Testes
+
+O workflow `.github/workflows/flutter-test.yml` executa automaticamente:
+
+1. **Setup do Ambiente**
+   - Checkout do código
+   - Instalação do Flutter 3.19.0
+   - Cache de dependências para builds mais rápidos
+
+2. **Verificações de Qualidade**
+   - ✅ Verificação de formatação do código (`dart format`)
+   - ✅ Análise estática com `flutter analyze --fatal-infos`
+   - ✅ Execução de todos os testes unitários
+   - ✅ Geração de relatório de cobertura
+
+3. **Relatório de Cobertura**
+   - Upload automático para Codecov (requer `CODECOV_TOKEN`)
+   - Geração de HTML com relatório visual
+   - Disponibilização do relatório como artefato (30 dias)
+   - Summary da cobertura no GitHub Actions
+
+4. **Critérios de Falha**
+   - ❌ Código mal formatado
+   - ❌ Warnings ou erros no analyze
+   - ❌ Qualquer teste unitário falhando
+   - ✅ Pipeline só passa se todos os critérios forem atendidos
+
+### Visualizar Resultados
+
+- **GitHub Actions**: Vá em `Actions` no repositório para ver os runs
+- **Relatório de Cobertura**: Baixe o artefato `coverage-report` do run
+- **Codecov**: Visualize métricas detalhadas em codecov.io (se configurado)
+
+### Badge de Status
+
+Adicione ao README para mostrar o status do pipeline:
+
+```markdown
+![Tests](https://github.com/reinaldorossetti/calculadora-flutter/actions/workflows/flutter-test.yml/badge.svg)
+```
+
+### Configurar Codecov (Opcional)
+
+1. Acesse [codecov.io](https://codecov.io) e conecte seu repositório
+2. Copie o token fornecido
+3. Adicione como secret no GitHub: `Settings` → `Secrets` → `CODECOV_TOKEN`
 
 ## 📁 Estrutura do Projeto
 
