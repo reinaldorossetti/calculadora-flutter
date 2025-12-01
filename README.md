@@ -2,8 +2,8 @@
 
 Uma calculadora moderna e elegante desenvolvida em Flutter com Material Design 3, featuring histórico de operações e suporte completo para operações matemáticas básicas.
 
-![Flutter](https://img.shields.io/badge/Flutter-3.x-02569B?logo=flutter)
-![Dart](https://img.shields.io/badge/Dart-3.x-0175C2?logo=dart)
+![Flutter](https://img.shields.io/badge/Flutter-%3E%3D3.19.0-02569B?logo=flutter)
+![Dart](https://img.shields.io/badge/Dart-%3E%3D3.0.0-0175C2?logo=dart)
 ![Material Design 3](https://img.shields.io/badge/Material-Design%203-757575?logo=material-design)
 
 ## 📋 Índice
@@ -31,8 +31,8 @@ Uma calculadora moderna e elegante desenvolvida em Flutter com Material Design 3
 
 Antes de começar, certifique-se de ter instalado:
 
-- **Flutter SDK** (>=2.18.2 <3.38.0)
-- **Dart SDK** (incluído com Flutter)
+- **Flutter SDK** (>=3.19.0)
+- **Dart SDK** (">=3.24.0 <4.0.0", incluído com Flutter)
 - **Android Studio** ou **VS Code** com extensões Flutter
 - **Emulador Android/iOS** ou dispositivo físico
 
