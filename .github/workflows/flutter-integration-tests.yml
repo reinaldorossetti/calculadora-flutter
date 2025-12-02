@@ -69,7 +69,7 @@ jobs:
               -gpu swiftshader_indirect \
               -accel on &   # <<<<< muito importante
             # Espera o boot completar de verdade (não só o device)
-            ($ANDROID_HOME/platform-tools/adb wait-for-device shell 'while [[ -z \)(getprop sys.boot_completed) ]]; do sleep 2; done; input keyevent 82' \)
+            $ANDROID_HOME/platform-tools/adb wait-for-device shell 'while [[ -z \)(getprop sys.boot_completed) ]]; do sleep 2; done; input keyevent 82'
         continued-on-error: true
       - name: Run integration tests
         run: |
