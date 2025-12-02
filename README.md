@@ -14,6 +14,7 @@ Uma calculadora moderna e elegante desenvolvida em Flutter com Material Design 3
 - [Instalação](#-instalação)
 - [Como Executar](#-como-executar)
 - [Testes](#-testes)
+  - [Testes BDD](#-executar-testes-bdd-behavior-driven-development)
 - [Análise de Código](#-análise-de-código)
 - [CI/CD - GitHub Actions](#-cicd---github-actions)
 - [Estrutura do Projeto](#-estrutura-do-projeto)
@@ -95,7 +96,7 @@ Enquanto o app estiver rodando, pressione:
 
 ## 🧪 Testes
 
-O projeto possui duas suítes de testes:
+O projeto possui três suítes de testes:
 
 ### Executar todos os testes
 
@@ -114,6 +115,18 @@ flutter test test/memory_test.dart
 ```bash
 flutter test test/calculator_widget_test.dart
 ```
+
+### 🎯 Executar testes BDD (Behavior Driven Development)
+
+```bash
+flutter test test_bdd/calculadora_bdd_test.dart
+```
+
+Os testes BDD seguem o padrão Gherkin com cenários em linguagem natural:
+- ✅ 15 cenários principais cobrindo todas as funcionalidades
+- 📝 Especificações legíveis em `test_bdd/features/calculadora.feature`
+- 🔄 Steps reutilizáveis para manutenibilidade
+- 📖 Documentação completa em `test_bdd/README.md`
 
 ### Executar com relatório detalhado
 
@@ -208,15 +221,15 @@ O projeto segue as regras de lint configuradas em `analysis_options.yaml` usando
 
 ## 🚀 CI/CD - GitHub Actions
 
-O projeto possui pipeline automatizado de CI/CD que é executado a cada push ou pull request nas branches `main` e `develop`.
+O projeto possui dois pipelines automatizados de CI/CD que são executados a cada push ou pull request nas branches `main` e `develop`.
 
-### Pipeline de Testes
+### 1️⃣ Pipeline de Testes Unitários
 
-O workflow `.github/workflows/flutter-test.yml` executa automaticamente:
+O workflow `.github/workflows/flutter-test.yml` executa:
 
 1. **Setup do Ambiente**
    - Checkout do código
-   - Instalação do Flutter 3.19.0
+   - Instalação do Flutter 3.24.0
    - Cache de dependências para builds mais rápidos
 
 2. **Verificações de Qualidade**
@@ -235,27 +248,53 @@ O workflow `.github/workflows/flutter-test.yml` executa automaticamente:
    - ❌ Código mal formatado
    - ❌ Warnings ou erros no analyze
    - ❌ Qualquer teste unitário falhando
-   - ✅ Pipeline só passa se todos os critérios forem atendidos
+
+### 2️⃣ Pipeline de Testes Integrados
+
+O workflow `.github/workflows/flutter-integration-tests.yml` executa:
+
+1. **Setup do Ambiente**
+   - Checkout do código
+   - Instalação do Flutter 3.24.0
+
+2. **Build da Aplicação**
+   - Compilação do APK em modo debug
+   - Preparação para testes no emulador
+
+3. **Emulador Android**
+   - Inicializa emulador Android (API 31, x86_64)
+   - 4 cores com 2GB de RAM
+   - GPU acelerada (swiftshader_indirect)
+
+4. **Execução dos Testes**
+   - Executa 37 testes integrados com `flutter test integration_test/`
+   - Reporter detalhado (`--reporter=expanded`)
+   - Valida todas as funcionalidades da calculadora na plataforma
+
+5. **Artefatos**
+   - Upload de resultados dos testes
+   - Build artifacts para análise
+   - Retenção por 30 dias
 
 ### Visualizar Resultados
 
-- **GitHub Actions**: Vá em `Actions` no repositório para ver os runs
-- **Relatório de Cobertura**: Baixe o artefato `coverage-report` do run
-- **Codecov**: Visualize métricas detalhadas em codecov.io (se configurado)
+- **GitHub Actions**: Vá em `Actions` no repositório para ver os runs de ambos os pipelines
+- **Relatório de Cobertura**: Baixe o artefato `coverage-report` do run de testes unitários
+- **Resultados de Integração**: Baixe o artefato `integration-test-results` do run de testes integrados
+- **Codecov**: Visualize métricas detelhadas em codecov.io (se configurado)
 
-### Badge de Status
-
-Adicione ao README para mostrar o status do pipeline:
+### Badges de Status
 
 ```markdown
-![Tests](https://github.com/reinaldorossetti/calculadora-flutter/actions/workflows/flutter-test.yml/badge.svg)
+![Unit Tests](https://github.com/reinaldorossetti/calculadora-flutter/actions/workflows/flutter-test.yml/badge.svg)
+![Integration Tests](https://github.com/reinaldorossetti/calculadora-flutter/actions/workflows/flutter-integration-tests.yml/badge.svg)
 ```
 
 ### Configurar Codecov (Opcional)
 
 1. Acesse [codecov.io](https://codecov.io) e conecte seu repositório
 2. Copie o token fornecido
-3. Adicione como secret no GitHub: `Settings` → `Secrets` → `CODECOV_TOKEN`
+3. Adicione como secret no GitHub: `Settings` → `Secrets and variables` → `Actions` → `CODECOV_TOKEN`
 
 ## 📁 Estrutura do Projeto
 
@@ -275,6 +314,15 @@ calculadora_flutter/
 ├── test/
 │   ├── memory_test.dart            # 35 testes unitários
 │   └── calculator_widget_test.dart # Testes integrados
+├── test_bdd/                        # 🎯 Testes BDD (Behavior Driven Development)
+│   ├── README.md                   # Documentação dos testes BDD
+│   ├── calculadora_bdd_test.dart   # 15 cenários BDD
+│   ├── features/
+│   │   └── calculadora.feature     # Especificações Gherkin (PT-BR)
+│   └── steps/
+│       └── bdd_test_helper.dart    # Steps reutilizáveis
+├── integration_test/                # Testes de integração
+│   └── calculator_widget_test.dart # 37 testes de widget
 ├── android/                         # Configurações Android
 ├── ios/                            # Configurações iOS
 ├── web/                            # Configurações Web
