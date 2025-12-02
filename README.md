@@ -257,30 +257,20 @@ O workflow `.github/workflows/flutter-integration-tests.yml` executa:
    - Checkout do código
    - Instalação do Flutter 3.24.0
 
-2. **Build da Aplicação**
-   - Compilação do APK em modo debug
-   - Preparação para testes no emulador
-
-3. **Emulador Android**
-   - Inicializa emulador Android (API 31, x86_64)
-   - 4 cores com 2GB de RAM
-   - GPU acelerada (swiftshader_indirect)
-
-4. **Execução dos Testes**
-   - Executa 37 testes integrados com `flutter test integration_test/`
+2. **Execução dos Testes**
+   - Roda `flutter test integration_test/calculator_widget_test.dart`
    - Reporter detalhado (`--reporter=expanded`)
-   - Valida todas as funcionalidades da calculadora na plataforma
+   - Mesmos 37 cenários de integração executados em ambiente hosted
 
-5. **Artefatos**
-   - Upload de resultados dos testes
-   - Build artifacts para análise
-   - Retenção por 30 dias
+3. **Artefatos**
+   - Upload do relatório bruto (`integration-test-report.txt`)
+   - Retenção por 30 dias para auditoria
 
 ### Visualizar Resultados
 
 - **GitHub Actions**: Vá em `Actions` no repositório para ver os runs de ambos os pipelines
 - **Relatório de Cobertura**: Baixe o artefato `coverage-report` do run de testes unitários
-- **Resultados de Integração**: Baixe o artefato `integration-test-results` do run de testes integrados
+- **Resultados de Integração**: Baixe o artefato `integration-test-report` do run de testes integrados
 - **Codecov**: Visualize métricas detelhadas em codecov.io (se configurado)
 
 ### Badges de Status
