@@ -59,7 +59,7 @@ jobs:
           echo "no" | avdmanager create avd -n test_emulator -k "system-images;android-34;google_apis;x86_64" --force
 
       - name: Start Emulator in Background
-        timeout-minutes: 20
+        timeout-minutes: 18
         run: |
           # Start emulator in background
           $ANDROID_HOME/emulator/emulator -avd test_emulator \
@@ -78,7 +78,7 @@ jobs:
           $ANDROID_HOME/platform-tools/adb wait-for-device shell 'while [[ -z $(getprop sys.boot_completed) ]]; do sleep 2; done; input keyevent 82'
           echo "Emulator is ready!"
         continue-on-error: true
-      
+
       - name: Run integration tests
         run: |
           flutter test integration_test/calculator_widget_test.dart --reporter=expanded > integration-test-report.txt || true
