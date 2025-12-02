@@ -257,14 +257,19 @@ O workflow `.github/workflows/flutter-integration-tests.yml` executa:
    - Checkout do código
    - Instalação do Flutter 3.24.0
 
-2. **Execução dos Testes**
-   - Roda `flutter test integration_test/calculator_widget_test.dart`
-   - Reporter detalhado (`--reporter=expanded`)
-   - Mesmos 37 cenários de integração executados em ambiente hosted
+2. **Provisionamento Android**
+   - Baixa e configura o Android SDK (command-line tools mais recentes)
+   - Aceita licenças e instala ferramentas `platform-tools`, `emulator`, `build-tools 34`
+   - Cria automaticamente um AVD headless (Android 14 / API 34)
 
-3. **Artefatos**
-   - Upload do relatório bruto (`integration-test-report.txt`)
-   - Retenção por 30 dias para auditoria
+3. **Execução dos Testes**
+   - Sobe o emulador em modo headless, desativa animações e desbloqueia a tela
+   - Roda `flutter test integration_test/calculator_widget_test.dart --reporter=expanded`
+   - Usa `tee` para gerar log legível sem suprimir falhas
+
+4. **Artefatos e Limpeza**
+   - Publica `integration-test-report.txt` (log detalhado) com retenção de 30 dias
+   - Derruba o emulador ao final, mesmo em caso de falhas
 
 ### Visualizar Resultados
 

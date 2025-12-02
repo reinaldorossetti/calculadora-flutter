@@ -33,55 +33,78 @@ jobs:
 
       - name: Setup Android SDK
         run: |
-          # Create directory for Android SDK
-          mkdir -p android-sdk/cmdline-tools
-          
-          # Download Command Line Tools
-          wget -q https://dl.google.com/android/repository/commandlinetools-linux-11076708_latest.zip -O cmdline-tools.zip
-          unzip -q cmdline-tools.zip -d android-sdk/cmdline-tools
-          
-          # Move to 'latest' as required by sdkmanager
-          mv android-sdk/cmdline-tools/cmdline-tools android-sdk/cmdline-tools/latest
-          
-          # Set Environment Variables for subsequent steps
-          echo "ANDROID_HOME=$PWD/android-sdk" >> $GITHUB_ENV
-          echo "PATH=$PWD/android-sdk/cmdline-tools/latest/bin:$PWD/android-sdk/platform-tools:$PWD/android-sdk/emulator:$PATH" >> $GITHUB_ENV
-          
-          # Export for current step execution
-          export ANDROID_HOME=$PWD/android-sdk
-          export PATH=$PWD/android-sdk/cmdline-tools/latest/bin:$PATH
-          
-          # Accept licenses and install components
-          yes | sdkmanager --licenses
-          sdkmanager --install "system-images;android-34;google_apis;x86_64" "platforms;android-34" "build-tools;34.0.0" "platform-tools" "emulator"
-          
-          # Create AVD
-          echo "no" | avdmanager create avd -n test_emulator -k "system-images;android-34;google_apis;x86_64" --force
+            set -euxo pipefail
 
-      - name: Start Emulator in Background
+            # Create directory for Android SDK
+            mkdir -p android-sdk/cmdline-tools
+
+            # Download Command Line Tools
+            wget -q https://dl.google.com/android/repository/commandlinetools-linux-11076708_latest.zip -O cmdline-tools.zip
+            unzip -q cmdline-tools.zip -d android-sdk/cmdline-tools
+            mv android-sdk/cmdline-tools/cmdline-tools android-sdk/cmdline-tools/latest
+            rm -f cmdline-tools.zip
+
+            # Export environment for subsequent steps
+            echo "ANDROID_HOME=$PWD/android-sdk" >> $GITHUB_ENV
+            echo "ANDROID_SDK_ROOT=$PWD/android-sdk" >> $GITHUB_ENV
+            echo "PATH=$PWD/android-sdk/cmdline-tools/latest/bin:$PWD/android-sdk/platform-tools:$PWD/android-sdk/emulator:$PATH" >> $GITHUB_ENV
+
+            # Export for current shell execution
+            export ANDROID_HOME=$PWD/android-sdk
+            export ANDROID_SDK_ROOT=$PWD/android-sdk
+            export PATH=$PWD/android-sdk/cmdline-tools/latest/bin:$PWD/android-sdk/platform-tools:$PWD/android-sdk/emulator:$PATH
+
+            # Accept licenses and install components
+            set +o pipefail
+            yes | sdkmanager --licenses > /dev/null
+            set -o pipefail
+            sdkmanager --install "system-images;android-34;google_apis;x86_64" "platforms;android-34" "build-tools;34.0.0" "platform-tools" "emulator"
+
+            # Create AVD if not existing
+            if ! avdmanager list avd | grep -q "Name: test_emulator"; then
+              yes | avdmanager create avd -n test_emulator -k "system-images;android-34;google_apis;x86_64" --force
+            fi
+
+      - name: Start Android Emulator
         timeout-minutes: 18
         run: |
-          # Start emulator in background
-          $ANDROID_HOME/emulator/emulator -avd test_emulator \
+          set -euxo pipefail
+
+          ${ANDROID_HOME}/emulator/emulator -avd test_emulator \
             -no-snapshot-save \
             -no-audio \
             -no-window \
             -gpu swiftshader_indirect \
-            -accel on > /dev/null 2>&1 &
-          
-          # Pequeno truque extra: desativa animações para os testes rodarem mais rápido
-          $ANDROID_HOME/platform-tools/adb shell settings put global window_animation_scale 0.0
-          $ANDROID_HOME/platform-tools/adb shell settings put global transition_animation_scale 0.0
-          $ANDROID_HOME/platform-tools/adb shell settings put global animator_duration_scale 0.0
-          
-          # Wait for device to boot completely
-          timeout 1200 $ANDROID_HOME/platform-tools/adb wait-for-any-device
-          $ANDROID_HOME/platform-tools/adb shell input keyevent 82
-        #continue-on-error: true
+            -no-boot-anim > /dev/null 2>&1 &
+          EMULATOR_PID=$!
+          echo "EMULATOR_PID=${EMULATOR_PID}" >> $GITHUB_ENV
+
+          ${ANDROID_HOME}/platform-tools/adb wait-for-device
+          ${ANDROID_HOME}/platform-tools/adb shell 'while [[ -z $(getprop sys.boot_completed) ]]; do sleep 2; done'
+
+          ${ANDROID_HOME}/platform-tools/adb shell settings put global window_animation_scale 0.0
+          ${ANDROID_HOME}/platform-tools/adb shell settings put global transition_animation_scale 0.0
+          ${ANDROID_HOME}/platform-tools/adb shell settings put global animator_duration_scale 0.0
+
+          ${ANDROID_HOME}/platform-tools/adb shell input keyevent 82
+
+          echo "Emulator is ready!"
 
       - name: Run integration tests
         run: |
-          flutter test integration_test/calculator_widget_test.dart --reporter=expanded > integration-test-report.txt || true
+          set -euxo pipefail
+          flutter test integration_test/calculator_widget_test.dart --reporter=expanded | tee integration-test-report.txt
+          TEST_EXIT=${PIPESTATUS[0]}
+          exit ${TEST_EXIT}
+
+      - name: Stop Android Emulator
+        if: always()
+        run: |
+          set -euxo pipefail
+          if [[ -n "${EMULATOR_PID:-}" ]]; then
+            kill ${EMULATOR_PID} 2>/dev/null || true
+          fi
+          ${ANDROID_HOME}/platform-tools/adb emu kill 2>/dev/null || true
 
       - name: Archive integration test report
         if: always()
@@ -97,4 +120,4 @@ jobs:
           echo "## Integration Tests Summary" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "✅ Integration tests completed" >> $GITHUB_STEP_SUMMARY
-          echo "📱 Platform: Android Emulator (API 31)" >> $GITHUB_STEP_SUMMARY
+          echo "📱 Platform: Android Emulator (API 34)" >> $GITHUB_STEP_SUMMARY
