@@ -33,8 +33,29 @@ jobs:
 
       - name: Setup Android SDK
         run: |
+          # Create directory for Android SDK
+          mkdir -p android-sdk/cmdline-tools
+          
+          # Download Command Line Tools
+          wget -q https://dl.google.com/android/repository/commandlinetools-linux-11076708_latest.zip -O cmdline-tools.zip
+          unzip -q cmdline-tools.zip -d android-sdk/cmdline-tools
+          
+          # Move to 'latest' as required by sdkmanager
+          mv android-sdk/cmdline-tools/cmdline-tools android-sdk/cmdline-tools/latest
+          
+          # Set Environment Variables for subsequent steps
+          echo "ANDROID_HOME=$PWD/android-sdk" >> $GITHUB_ENV
+          echo "PATH=$PWD/android-sdk/cmdline-tools/latest/bin:$PWD/android-sdk/platform-tools:$PWD/android-sdk/emulator:$PATH" >> $GITHUB_ENV
+          
+          # Export for current step execution
+          export ANDROID_HOME=$PWD/android-sdk
+          export PATH=$PWD/android-sdk/cmdline-tools/latest/bin:$PATH
+          
+          # Accept licenses and install components
           yes | sdkmanager --licenses
-          sdkmanager --install "system-images;android-31;google_apis;x86_64" "platforms;android-31" "build-tools;34.0.0"
+          sdkmanager --install "system-images;android-31;google_apis;x86_64" "platforms;android-31" "build-tools;34.0.0" "platform-tools" "emulator"
+          
+          # Create AVD
           echo "no" | avdmanager create avd -n test_emulator -k "system-images;android-31;google_apis;x86_64" --force
 
       - name: Start Emulator
