@@ -52,30 +52,31 @@ jobs:
           export PATH=$PWD/android-sdk/cmdline-tools/latest/bin:$PATH
           
           # Accept licenses and install components
-          yes | sdkmanager --licenses
-          sdkmanager --install "system-images;android-34;google_apis;x86_64" "platforms;android-34" "build-tools;34.0.0" "platform-tools" "emulator"
-          
-          # Create AVD
-          yes | avdmanager create avd -n test_emulator -k "system-images;android-34;google_apis;x86_64" --force
-
+          sdkmanager "system-images;android-34;google_apis;x86_64"
+          echo "no" | avdmanager create avd -n test_emulator -k "system-images;android-34;google_apis;x86_64" --force
+      
       - name: Start Emulator in Background
         timeout-minutes: 18
         run: |
           # Start emulator in background
-          $ANDROID_HOME/emulator/emulator -avd test_emulator \
+          ${ANDROID_HOME}/emulator/emulator -avd test_emulator \
             -no-snapshot-save \
             -no-audio \
             -no-window \
             -gpu swiftshader_indirect \
-            -accel on > /dev/null 2>&1 &
-          
-          # Pequeno truque extra: desativa animações para os testes rodarem mais rápido
-          $ANDROID_HOME/platform-tools/adb shell settings put global window_animation_scale 0.0
-          $ANDROID_HOME/platform-tools/adb shell settings put global transition_animation_scale 0.0
-          $ANDROID_HOME/platform-tools/adb shell settings put global animator_duration_scale 0.0
+            -no-boot-anim > /dev/null 2>&1 &
           
           # Wait for device to boot completely
-          $ANDROID_HOME/platform-tools/adb wait-for-device shell 'while [[ -z $(getprop sys.boot_completed) ]]; do sleep 2; done; input keyevent 82'
+          ${ANDROID_HOME}/platform-tools/adb wait-for-device shell 'while [[ -z $(getprop sys.boot_completed) ]]; do sleep 2; done'
+          
+          # Disable animations for faster tests
+          ${ANDROID_HOME}/platform-tools/adb shell settings put global window_animation_scale 0.0
+          ${ANDROID_HOME}/platform-tools/adb shell settings put global transition_animation_scale 0.0
+          ${ANDROID_HOME}/platform-tools/adb shell settings put global animator_duration_scale 0.0
+          
+          # Unlock screen
+          ${ANDROID_HOME}/platform-tools/adb shell input keyevent 82
+          
           echo "Emulator is ready!"
         continue-on-error: true
 
