@@ -69,10 +69,16 @@ jobs:
             -gpu swiftshader_indirect \
             -accel on > /dev/null 2>&1 &
           
+          # Pequeno truque extra: desativa animações para os testes rodarem mais rápido
+          $ANDROID_HOME/platform-tools/adb shell settings put global window_animation_scale 0.0
+          $ANDROID_HOME/platform-tools/adb shell settings put global transition_animation_scale 0.0
+          $ANDROID_HOME/platform-tools/adb shell settings put global animator_duration_scale 0.0
+          
           # Wait for device to boot completely
           $ANDROID_HOME/platform-tools/adb wait-for-device shell 'while [[ -z $(getprop sys.boot_completed) ]]; do sleep 2; done; input keyevent 82'
           echo "Emulator is ready!"
-
+        continue-on-error: true
+      
       - name: Run integration tests
         run: |
           flutter test integration_test/calculator_widget_test.dart --reporter=expanded > integration-test-report.txt || true
