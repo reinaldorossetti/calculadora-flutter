@@ -75,9 +75,9 @@ jobs:
           $ANDROID_HOME/platform-tools/adb shell settings put global animator_duration_scale 0.0
           
           # Wait for device to boot completely
-          $ANDROID_HOME/platform-tools/adb wait-for-device shell 'while [[ -z $(getprop sys.boot_completed) ]]; do sleep 2; done; input keyevent 82'
-          echo "Emulator is ready!"
-        continue-on-error: true
+          timeout 1200 $ANDROID_HOME/platform-tools/adb wait-for-any-device
+          $ANDROID_HOME/platform-tools/adb shell input keyevent 82
+        #continue-on-error: true
 
       - name: Run integration tests
         run: |
