@@ -62,7 +62,7 @@ jobs:
 
             # Create AVD if not existing
             if ! avdmanager list avd | grep -q "Name: test_emulator"; then
-              yes | avdmanager create avd -n test_emulator -k "system-images;android-34;google_apis;x86_64" --force
+              echo "no" | avdmanager create avd -n test_emulator -k "system-images;android-34;google_apis;x86_64" --force
             fi
 
       - name: Start Android Emulator
