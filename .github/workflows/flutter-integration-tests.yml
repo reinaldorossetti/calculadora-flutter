@@ -89,6 +89,7 @@ jobs:
           ${ANDROID_HOME}/platform-tools/adb shell input keyevent 82
 
           echo "Emulator is ready!"
+        continue-on-error: true
 
       - name: Run integration tests
         run: |
