@@ -15,6 +15,13 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: Setup cmake
+        uses: jwlawson/actions-setup-cmake@v2
+        with:
+          cmake-version: '3.16.x'
+      - name: Use cmake
+        run: cmake --version
+
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
         with:
@@ -58,7 +65,7 @@ jobs:
             set +o pipefail
             yes | sdkmanager --licenses > /dev/null
             set -o pipefail
-            sdkmanager --install "system-images;android-34;google_apis;x86_64" "platforms;android-34" "build-tools;34.0.0" "platform-tools" "emulator" "ndk-bundle" "cmake"
+            sdkmanager --install "system-images;android-34;google_apis;x86_64" "platforms;android-34" "build-tools;34.0.0" "platform-tools" "emulator" "ndk-bundle"
 
             # Create AVD if not existing
             echo "no" | avdmanager create avd --name Nexus6P --device "Nexus 6P" -k "system-images;android-34;google_apis;x86_64" --force
