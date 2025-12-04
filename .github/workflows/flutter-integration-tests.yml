@@ -1,10 +1,12 @@
 name: Flutter Integration Tests
 
 on:
-  push:
-    # branches: [ main, develop ]
-  pull_request:
-    # branches: [ main, develop ]
+  workflow_dispatch:
+    inputs:
+      run-label:
+        description: "Optional label to identify this manual run"
+        required: false
+        default: "manual-trigger"
 
 jobs:
   integration-tests:
@@ -72,7 +74,7 @@ jobs:
             avdmanager list avd
 
       - name: Start Android Emulator
-        timeout-minutes: 28
+        timeout-minutes: 35
         run: |
           set -euxo pipefail
 
