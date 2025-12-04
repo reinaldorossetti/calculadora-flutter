@@ -271,11 +271,28 @@ O workflow `.github/workflows/flutter-integration-tests.yml` executa:
    - Publica `integration-test-report.txt` (log detalhado) com retenção de 30 dias
    - Derruba o emulador ao final, mesmo em caso de falhas
 
+### 3️⃣ Pipeline de Testes Integrados (ReactiveCircus)
+
+O workflow `.github/workflows/flutter-integration-tests-reactive.yml` usa a ação `reactivecircus/android-emulator-runner@v2` para provisionar o emulador automaticamente:
+
+1. **Provisionamento Simplificado**
+   - Setup automático de SDK + AVD via Action
+   - Emulador Android 14 (API 34), perfil Nexus 6P
+
+2. **Execução dos Testes**
+   - Roda `flutter test integration_test/calculator_widget_test.dart --reporter=expanded`
+   - Logs redirecionados via `tee` para auditoria
+
+3. **Artefatos**
+   - Publica `integration-test-report-reactivecircus` com retenção de 30 dias
+
+Esse pipeline é ideal para cenários em que se deseja reduzir o boilerplate de configuração manual do SDK dentro da esteira.
+
 ### Visualizar Resultados
 
 - **GitHub Actions**: Vá em `Actions` no repositório para ver os runs de ambos os pipelines
 - **Relatório de Cobertura**: Baixe o artefato `coverage-report` do run de testes unitários
-- **Resultados de Integração**: Baixe o artefato `integration-test-report` do run de testes integrados
+- **Resultados de Integração**: Baixe o artefato `integration-test-report` do run padrão ou `integration-test-report-reactivecircus` do pipeline com ReactiveCircus
 - **Codecov**: Visualize métricas detelhadas em codecov.io (se configurado)
 
 ### Badges de Status

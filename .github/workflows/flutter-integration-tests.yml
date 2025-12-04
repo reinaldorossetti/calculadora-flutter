@@ -2,9 +2,9 @@ name: Flutter Integration Tests
 
 on:
   push:
-    branches: [ main, develop ]
+    # branches: [ main, develop ]
   pull_request:
-    branches: [ main, develop ]
+    # branches: [ main, develop ]
 
 jobs:
   integration-tests:
@@ -100,6 +100,7 @@ jobs:
       - name: Run integration tests
         run: |
           set -euxo pipefail
+          adb devices
           flutter test integration_test/calculator_widget_test.dart --reporter=expanded | tee integration-test-report.txt
           TEST_EXIT=${PIPESTATUS[0]}
           exit ${TEST_EXIT}
