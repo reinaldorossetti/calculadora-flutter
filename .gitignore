@@ -6,7 +6,6 @@
 *.swp
 .buildlog/
 .history
-android/
 ios/
 web/
 macos/
