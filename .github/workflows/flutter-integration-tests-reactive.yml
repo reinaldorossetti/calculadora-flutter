@@ -1,0 +1,64 @@
+name: Flutter Integration Tests (ReactiveCircus)
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+
+jobs:
+  integration-tests:
+    name: Run Integration Tests (ReactiveCircus)
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: 3.24.0
+          channel: 'stable'
+          cache: true
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Run integration tests on emulator
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 34
+          arch: x86_64
+          target: google_apis
+          profile: Nexus 6P
+          emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -no-boot-anim -noaudio
+          disable-animations: true
+          script: |
+            adb devices
+            flutter test integration_test/calculator_widget_test.dart --reporter=expanded | tee integration-test-report.txt
+            TEST_EXIT=${PIPESTATUS[0]}
+            exit ${TEST_EXIT}
+
+      - name: Upload integration test report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: integration-test-report-reactivecircus
+          path: integration-test-report.txt
+          retention-days: 30
+
+      - name: Job summary
+        if: always()
+        run: |
+          echo "## Integration Tests (ReactiveCircus)" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "✅ Emulator API Level: 34" >> $GITHUB_STEP_SUMMARY
+          echo "📱 Profile: Nexus 6P" >> $GITHUB_STEP_SUMMARY
