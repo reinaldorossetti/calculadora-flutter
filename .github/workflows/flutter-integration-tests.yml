@@ -58,7 +58,7 @@ jobs:
             set +o pipefail
             yes | sdkmanager --licenses > /dev/null
             set -o pipefail
-            sdkmanager --install "system-images;android-34;google_apis;x86_64" "platforms;android-34" "build-tools;34.0.0" "platform-tools" "emulator" "ndk" "cmake"
+            sdkmanager --install "system-images;android-34;google_apis;x86_64" "platforms;android-34" "build-tools;34.0.0" "platform-tools" "emulator" "ndk-bundle" "cmake"
 
             # Create AVD if not existing
             echo "no" | avdmanager create avd --name Nexus6P --device "Nexus 6P" -k "system-images;android-34;google_apis;x86_64" --force
