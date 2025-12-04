@@ -45,8 +45,6 @@ jobs:
 
       - name: Gradle cache
         uses: gradle/actions/setup-gradle@v3
-        with:
-          cache-enabled: true
 
       - name: Run integration tests on emulator
         uses: reactivecircus/android-emulator-runner@v2
@@ -61,6 +59,8 @@ jobs:
             adb devices
             flutter doctor
             flutter drive --driver=test_driver/integration_test.dart --target=integration_test/calculator_widget_test.dart -d emulator-5554 | tee integration-test-report.txt
+            TEST_EXIT=${PIPESTATUS[0]}
+            exit ${TEST_EXIT}
 
       - name: Upload integration test report
         if: always()
