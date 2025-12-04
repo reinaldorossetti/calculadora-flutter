@@ -14,7 +14,6 @@ Uma calculadora moderna e elegante desenvolvida em Flutter com Material Design 3
 - [Instalação](#-instalação)
 - [Como Executar](#-como-executar)
 - [Testes](#-testes)
-  - [Testes BDD](#-executar-testes-bdd-behavior-driven-development)
 - [Análise de Código](#-análise-de-código)
 - [CI/CD - GitHub Actions](#-cicd---github-actions)
 - [Estrutura do Projeto](#-estrutura-do-projeto)
@@ -28,8 +27,8 @@ Uma calculadora moderna e elegante desenvolvida em Flutter com Material Design 3
 - 🎨 **Tema Dark** - Design elegante com cores personalizáveis
 - 🔢 **Números Decimais** - Suporte completo para operações com decimais
 - ⚡ **Operações em Cadeia** - Execute múltiplas operações sequencialmente
-- 🧪 **35 Testes Unitários** - Cobertura completa de funcionalidades
-- 🔬 **Testes de Widget** - Testes integrados da interface
+- 🧪 **84 Testes Automatizados** - 35 unitários + 37 widgets + 12 E2E
+- 📊 **Cobertura >90%** - Testes em 3 níveis (unitário, integração, E2E)
 
 ## 📋 Pré-requisitos
 
@@ -96,40 +95,111 @@ Enquanto o app estiver rodando, pressione:
 
 ## 🧪 Testes
 
-O projeto possui três suítes de testes:
+O projeto possui três níveis de testes: **unitários** (35), **integrados de widgets** (37) e **end-to-end** (12).
 
-### Executar todos os testes
+### 📊 Visão Geral dos Testes
 
-```bash
-flutter test
-```
+| Tipo | Quantidade | Localização | Ferramenta |
+|------|------------|-------------|------------|
+| Unitários | 35 | `test/memory_test.dart` | Flutter Test |
+| Widget/Integração | 37 | `integration_test/calculator_widget_test.dart` | Flutter Integration Test |
+| End-to-End (E2E) | 12 | `automation/robot_bdd/tests/calculator.robot` | Robot Framework + Appium |
+| **Total** | **84** | - | - |
 
-### Executar testes unitários
+### 🔬 1. Testes Unitários
 
+Testes de lógica de negócio pura, sem interface gráfica.
+
+**Executar:**
 ```bash
 flutter test test/memory_test.dart
 ```
 
-### Executar testes de widget
+**Cobertura:**
+- ✅ Operações básicas (inicialização, dígitos, decimais)
+- ✅ Operações matemáticas (+, -, ×, ÷, %)
+- ✅ Histórico de operações
+- ✅ Casos especiais (zero à esquerda, múltiplos pontos, etc)
 
-```bash
-flutter test test/calculator_widget_test.dart
+**Exemplo de teste unitário (CT05):**
+```dart
+test('CT05 - Deve somar dois números inteiros', () {
+  memory.applyCommand('5');
+  memory.applyCommand('+');
+  memory.applyCommand('3');
+  memory.applyCommand('=');
+  expect(memory.value, '8');
+});
 ```
 
-### 🎯 Executar testes BDD (Behavior Driven Development)
+### 🎨 2. Testes de Widget (Integração)
 
+Testes de integração com interface Flutter, simulando interação do usuário.
+
+**Executar:**
 ```bash
-flutter test test_bdd/calculadora_bdd_test.dart
+flutter test integration_test/calculator_widget_test.dart
 ```
 
-Os testes BDD seguem o padrão Gherkin com cenários em linguagem natural:
-- ✅ 15 cenários principais cobrindo todas as funcionalidades
-- 📝 Especificações legíveis em `test_bdd/features/calculadora.feature`
-- 🔄 Steps reutilizáveis para manutenibilidade
-- 📖 Documentação completa em `test_bdd/README.md`
+**Cobertura:**
+- ✅ Inicialização e comportamento dos botões
+- ✅ Operações matemáticas através da interface
+- ✅ Validação de histórico na UI
+- ✅ Limite de 21 caracteres no display
+- ✅ Operações complexas e encadeadas
 
-### Executar com relatório detalhado
+**Exemplo de teste de widget (CTW05):**
+```dart
+testWidgets('CTW05 - Deve somar dois números inteiros', (tester) async {
+  await tester.pumpWidget(const Calculator());
+  await tester.pumpAndSettle();
 
+  await _tapSequence(tester, ['7', '+', '5', '=']);
+
+  expect(_displayValue(tester), '12');
+  expect(find.textContaining('7 + 5 = 12'), findsOneWidget);
+});
+```
+
+### 🤖 3. Testes End-to-End (E2E)
+
+Testes BDD com Robot Framework + Appium em dispositivo/emulador real.
+
+**Executar:**
+```bash
+cd automation/robot_bdd
+robot tests/calculator.robot
+```
+
+**Cobertura (12 cenários - CT001 a CT012):**
+- ✅ Operações aritméticas completas
+- ✅ Validação de histórico em app real
+- ✅ Limite de caracteres no display
+- ✅ Formatação financeira (1.000.000,00)
+- ✅ Fluxos completos de usuário
+
+**Exemplo de teste E2E (CT001):**
+```robotframework
+Cenário: Soma de dois números inteiros
+    [Documentation]    Verifica a operação de adição com números inteiros.
+    [Tags]    CT001
+    Dado que o aplicativo da calculadora está aberto
+    Quando eu digito "7"
+    E eu toco no botão "+"
+    E eu digito "5"
+    E eu toco no botão "="
+    Então o display deve mostrar     12
+    E o histórico deve exibir "7 + 5 = 12"
+```
+
+### 🚀 Executar Todos os Testes
+
+**Testes Flutter (unitários + widgets):**
+```bash
+flutter test
+```
+
+**Com relatório detalhado:**
 ```bash
 flutter test --reporter expanded
 ```
@@ -324,17 +394,15 @@ calculadora_flutter/
 │   └── screens/                     # Telas da aplicação
 │       └── calculator.dart         # Tela principal
 ├── test/
-│   ├── memory_test.dart            # 35 testes unitários
-│   └── calculator_widget_test.dart # Testes integrados
-├── test_bdd/                        # 🎯 Testes BDD (Behavior Driven Development)
-│   ├── README.md                   # Documentação dos testes BDD
-│   ├── calculadora_bdd_test.dart   # 15 cenários BDD
-│   ├── features/
-│   │   └── calculadora.feature     # Especificações Gherkin (PT-BR)
-│   └── steps/
-│       └── bdd_test_helper.dart    # Steps reutilizáveis
+│   └── memory_test.dart            # 35 testes unitários (CT01-CT35)
 ├── integration_test/                # Testes de integração
-│   └── calculator_widget_test.dart # 37 testes de widget
+│   └── calculator_widget_test.dart # 37 testes de widget (CTW01-CTW37)
+├── test_driver/                     # Driver de testes integrados
+│   └── integration_test.dart       # Captura de screenshots
+├── .github/workflows/               # Pipelines CI/CD
+│   ├── flutter-test.yml            # Testes unitários com cobertura
+│   ├── flutter-integration-tests.yml # Testes de integração (manual)
+│   └── flutter-integration-tests-reactive.yml # Testes com ReactiveCircus
 ├── android/                         # Configurações Android
 ├── ios/                            # Configurações iOS
 ├── web/                            # Configurações Web
@@ -483,14 +551,31 @@ void main() => runApp(const Calculator());
 
 ---
 
-### `/test/calculator_widget_test.dart`
+### `/integration_test/calculator_widget_test.dart`
 
-**Testes integrados de interface:**
+**Testes integrados de interface com 37 casos de teste:**
 
-**Casos de teste:**
-- `CTW01` - Soma simples com histórico
-- `CTW02` - Cálculos encadeados
-- `CTW03` - Função AC limpa tudo
+**Grupos principais:**
+1. **Operações Básicas** (CTW01-CTW04)
+   - Inicialização com 0
+   - Adição de dígitos
+   - Pontos decimais
+
+2. **Operações Matemáticas** (CTW05-CTW21)
+   - Adição, subtração, multiplicação, divisão, módulo
+   - Operações em cadeia
+   - Números inteiros e decimais
+
+3. **Função AC e Histórico** (CTW22-CTW27)
+   - Limpeza de valores
+   - Armazenamento de histórico
+   - Limite de 2 operações
+
+4. **Casos Especiais** (CTW28-CTW37)
+   - Formatação de números
+   - Troca de operador
+   - Limite de 21 caracteres
+   - Operações complexas
 
 **Funções auxiliares:**
 - `_tapSequence()` - Simula sequência de toques
@@ -580,11 +665,13 @@ minFontSize: 24, // Tamanho mínimo
 ## 📊 Métricas do Projeto
 
 - **Linhas de código:** ~600
-- **Testes unitários:** 35
-- **Testes de widget:** 3
+- **Testes unitários:** 35 (CT01-CT35)
+- **Testes de widget:** 37 (CTW01-CTW37)
+- **Testes E2E:** 12 (CT001-CT012)
+- **Total de testes:** 84
 - **Cobertura de código:** >90%
 - **Componentes reutilizáveis:** 4
-- **Operações suportadas:** 5
+- **Operações suportadas:** 5 (+, -, ×, ÷, %)
 
 ## 🤝 Contribuindo
 

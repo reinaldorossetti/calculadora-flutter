@@ -13,6 +13,7 @@ force tags       calculator
 
 Cenário: Soma de dois números inteiros
     [Documentation]    Verifica a operação de adição com números inteiros.
+    [Tags]    CT001
     Dado que o aplicativo da calculadora está aberto
     Quando eu digito "7"
     E eu toco no botão "+"
@@ -23,6 +24,7 @@ Cenário: Soma de dois números inteiros
 
 Cenário: Soma de números decimais
     [Documentation]    Verifica a operação de adição com decimais.
+    [Tags]    CT002
     Dado que o aplicativo da calculadora está aberto
     Quando eu digito a sequência    2    .    5
     E eu toco no botão "+"
@@ -33,6 +35,7 @@ Cenário: Soma de números decimais
 
 Cenário: Subtração com resultado negativo
     [Documentation]    Garante que subtrações podem resultar em números negativos.
+    [Tags]    CT003
     Dado que o aplicativo da calculadora está aberto
     Quando eu digito "5"
     E eu toco no botão "-"
@@ -43,6 +46,7 @@ Cenário: Subtração com resultado negativo
 
 Cenário: Multiplicação por zero
     [Documentation]    Valida multiplicação por zero.
+    [Tags]    CT004
     Dado que o aplicativo da calculadora está aberto
     Quando eu digito "5"
     E eu toco no botão "x"
@@ -53,6 +57,7 @@ Cenário: Multiplicação por zero
 
 Cenário: Divisão por zero
     [Documentation]    Valida multiplicação por zero.
+    [Tags]    CT005
     Dado que o aplicativo da calculadora está aberto
     Quando eu digito "5"
     E eu toco no botão "/"
@@ -63,6 +68,7 @@ Cenário: Divisão por zero
 
 Cenário: Divisão inteira
     [Documentation]    Verifica divisão simples.
+    [Tags]    CT006
     Dado que o aplicativo da calculadora está aberto
     Quando eu digito a sequência    1    0
     E eu toco no botão "/"
@@ -73,6 +79,7 @@ Cenário: Divisão inteira
 
 Cenário: Cálculo de módulo
     [Documentation]    Verifica operação de módulo.
+    [Tags]    CT007
     Dado que o aplicativo da calculadora está aberto
     Quando eu digito a sequência    1    0
     E eu toco no botão "%"
@@ -83,6 +90,7 @@ Cenário: Cálculo de módulo
 
 Cenário: Limpar com AC
     [Documentation]    Garante que o botão AC limpa display e histórico.
+    [Tags]    CT008
     Dado que o aplicativo da calculadora está aberto
     Quando eu digito a sequência    5    3
     E eu toco no botão "AC"
@@ -91,6 +99,7 @@ Cenário: Limpar com AC
 
 Cenário: Operações em cadeia
     [Documentation]    Valida sequência de operações encadeadas.
+    [Tags]    CT009
     Dado que o aplicativo da calculadora está aberto
     Quando eu digito "8"
     E eu toco no botão "+"
@@ -104,6 +113,7 @@ Cenário: Operações em cadeia
 
 Cenário: Limite de 21 caracteres
     [Documentation]    Garante que o display limita a 21 caracteres.
+    [Tags]    CT010
     Dado que o aplicativo da calculadora está aberto
     Quando eu digito a sequência    1    2    3    4    5    6    7    8    9    0    1    2    3    4    5    6    7    8    9    0    .    1
     Então o display deve ter no máximo 21 caracteres
@@ -111,6 +121,7 @@ Cenário: Limite de 21 caracteres
 
 Cenário: Histórico mantém últimas duas operações
     [Documentation]    Verifica que apenas as duas últimas operações ficam visíveis.
+    [Tags]    CT011
     Dado que o aplicativo da calculadora está aberto
     Quando eu digito a sequência    2    +    2
     E eu toco no botão "="
@@ -121,3 +132,14 @@ Cenário: Histórico mantém últimas duas operações
     Então o histórico deve exibir "4 x 3 = 12"
     E o histórico deve exibir "12 - 5 = 7"
     E o histórico não deve exibir "2 + 2 = 4"
+
+Cenário: Formatação de máscara financeira
+    [Documentation]    Verifica se números grandes são formatados com separadores de milhar e decimais no padrão brasileiro (1.000.000,00).
+    [Tags]    CT012
+    Dado que o aplicativo da calculadora está aberto
+    Quando eu digito a sequência    5    0    0    0    0    0
+    E eu toco no botão "+"
+    E eu digito a sequência    5    0    0    0    0    0
+    E eu toco no botão "="
+    Então o display deve mostrar com formatação financeira     1.000.000
+    E o histórico deve exibir "500000 + 500000 = 1000000"

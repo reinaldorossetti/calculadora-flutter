@@ -86,3 +86,9 @@ o histórico não deve exibir "${valor}"
 
 o display deve ter no máximo ${limite} caracteres
     Display Deve Ter Limite    ${limite}
+
+o display deve mostrar com formatação financeira
+    [Arguments]    ${valor_formatado}
+    Wait Until Element Is Visible    ${DISPLAY_LOCATOR}    ${DEFAULT_TIMEOUT}
+    ${texto}=    Get Text    ${DISPLAY_LOCATOR}
+    Should Be Equal As Strings    ${texto}    ${valor_formatado}    Formatação financeira incorreta: esperado "${valor_formatado}", obtido "${texto}"
