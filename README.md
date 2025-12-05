@@ -116,9 +116,9 @@ Este projeto segue a **Pirâmide de Testes**, uma estratégia que prioriza teste
 
 **⭐⭐⭐ Vantagens da Pirâmide de Testes:**
 
-- ✅ **Detecta problemas o mais cedo possível** - Testes unitários falham rapidamente quando a lógica está incorreta
-- ⚡ **Execução rápida** - Maior parte dos testes são unitários, executados em milissegundos
-- 🎯 **Fornece indicações claras quando algo precisa ser corrigido** - Falhas em testes unitários apontam exatamente onde está o problema
+- ✅ **Detecta problemas o mais cedo possível** - Testes unitários falham rapidamente quando a lógica está incorreta, os testes de widget capturam problemas de integração, e os testes E2E validam fluxos completos
+- ⚡ **Execução rápida** - Maior parte dos testes são unitários e integrados, executados em milissegundos
+- 🎯 **Fornece indicações claras quando algo precisa ser corrigido** - Falhas em testes unitários apontam exatamente onde está o problema.
 
 **Distribuição ideal mantida:**
 - 📊 **42% Unitários** - Base sólida de testes de lógica (35/84)
