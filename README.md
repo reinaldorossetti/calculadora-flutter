@@ -97,6 +97,34 @@ Enquanto o app estiver rodando, pressione:
 
 O projeto possui três níveis de testes: **unitários** (35), **integrados de widgets** (37) e **end-to-end** (12).
 
+### 🔺 Pirâmide de Testes
+
+Este projeto segue a **Pirâmide de Testes**, uma estratégia que prioriza testes rápidos e baratos na base, progredindo para testes mais complexos e caros no topo:
+
+```
+        /\
+       /  \
+      / E2E \      12 testes - Fluxos completos do usuário
+     /------\
+    /        \
+   / Widget  \    37 testes - Integração de UI
+  /----------\
+ /            \
+/  Unitários   \  35 testes - Lógica de negócio
+----------------
+```
+
+**⭐⭐⭐ Vantagens da Pirâmide de Testes:**
+
+- ✅ **Detecta problemas o mais cedo possível** - Testes unitários falham rapidamente quando a lógica está incorreta
+- ⚡ **Execução rápida** - Maior parte dos testes são unitários, executados em milissegundos
+- 🎯 **Fornece indicações claras quando algo precisa ser corrigido** - Falhas em testes unitários apontam exatamente onde está o problema
+
+**Distribuição ideal mantida:**
+- 📊 **42% Unitários** - Base sólida de testes de lógica (35/84)
+- 📊 **44% Widgets** - Cobertura robusta de interface (37/84)
+- 📊 **14% E2E** - Validação de fluxos críticos (12/84)
+
 ### 📊 Visão Geral dos Testes
 
 | Tipo | Quantidade | Localização | Ferramenta |
